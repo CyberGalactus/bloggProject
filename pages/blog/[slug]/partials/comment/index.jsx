@@ -1,8 +1,21 @@
 import Button from "@components/button";
 import styles from "./comment.module.css";
+import { commentsCacheKey, removeComment } from "../../../../../api-routes/comments";
+import useSWRMutation from "swr/mutation"
 
-export default function Comment({ comment, createdAt, author, id }) {
-  const handleDelete = () => {
+
+
+export default function Comment({ comment, createdAt, author, id, postId }) {
+
+  const { trigger: removeTrigger, isMutating } = useSWRMutation (
+    postId ? `${commentsCacheKey}${postId}`: null, 
+    removeComment, {
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+  const handleDelete = async () => {
+    await removeTrigger(id)
     console.log({ id });
   };
   return (
